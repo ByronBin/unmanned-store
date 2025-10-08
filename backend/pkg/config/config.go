@@ -2,7 +2,6 @@ package config
 
 import (
 	"os"
-	"strings"
 
 	"github.com/spf13/viper"
 )
