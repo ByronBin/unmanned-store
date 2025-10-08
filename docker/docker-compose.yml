@@ -1,0 +1,79 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: unmanned-store-db
+    environment:
+      POSTGRES_DB: unmanned_store
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ../backend/migrations:/docker-entrypoint-initdb.d
+    networks:
+      - unmanned-store-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: unmanned-store-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - unmanned-store-network
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: unmanned-store-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - unmanned-store-network
+
+  backend:
+    build:
+      context: ../backend
+      dockerfile: ../docker/Dockerfile.backend
+    container_name: unmanned-store-backend
+    ports:
+      - "8080:8080"
+    environment:
+      - DATABASE_HOST=postgres
+      - DATABASE_PORT=5432
+      - DATABASE_USER=postgres
+      - DATABASE_PASSWORD=postgres
+      - DATABASE_NAME=unmanned_store
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672/
+    depends_on:
+      - postgres
+      - redis
+      - rabbitmq
+    networks:
+      - unmanned-store-network
+
+  admin-frontend:
+    build:
+      context: ../admin-frontend
+      dockerfile: ../docker/Dockerfile.frontend
+    container_name: unmanned-store-admin
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - unmanned-store-network
+
+volumes:
+  postgres-data:
+
+networks:
+  unmanned-store-network:
+    driver: bridge

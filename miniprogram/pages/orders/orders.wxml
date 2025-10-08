@@ -1,0 +1,32 @@
+<!--pages/orders/orders.wxml-->
+<view class="container">
+  <view class="tabs">
+    <view class="tab {{currentTab === 'all' ? 'active' : ''}}" bindtap="switchTab" data-tab="all">全部</view>
+    <view class="tab {{currentTab === 'pending' ? 'active' : ''}}" bindtap="switchTab" data-tab="pending">待支付</view>
+    <view class="tab {{currentTab === 'paid' ? 'active' : ''}}" bindtap="switchTab" data-tab="paid">已支付</view>
+    <view class="tab {{currentTab === 'completed' ? 'active' : ''}}" bindtap="switchTab" data-tab="completed">已完成</view>
+  </view>
+
+  <view class="order-list">
+    <view class="order-item" wx:for="{{orders}}" wx:key="id" bindtap="goToDetail" data-id="{{item.id}}">
+      <view class="order-header">
+        <text class="order-no">订单号: {{item.order_no}}</text>
+        <text class="order-status {{item.status}}">{{item.statusText}}</text>
+      </view>
+      <view class="order-products">
+        <view class="product" wx:for="{{item.items}}" wx:key="id">
+          <image class="product-image" src="{{item.image}}" />
+          <text class="product-name">{{item.name}} x{{item.quantity}}</text>
+        </view>
+      </view>
+      <view class="order-footer">
+        <text class="order-total">合计: ¥{{item.total_amount}}</text>
+        <button class="order-btn" wx:if="{{item.status === 'pending'}}" catchtap="pay" data-id="{{item.id}}">去支付</button>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty" wx:if="{{orders.length === 0}}">
+    <text>暂无订单</text>
+  </view>
+</view>

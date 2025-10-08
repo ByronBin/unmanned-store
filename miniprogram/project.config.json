@@ -1,0 +1,25 @@
+{
+  "description": "项目配置文件",
+  "packOptions": {
+    "ignore": []
+  },
+  "setting": {
+    "urlCheck": false,
+    "es6": true,
+    "postcss": true,
+    "minified": true,
+    "newFeature": true
+  },
+  "compileType": "miniprogram",
+  "libVersion": "2.19.4",
+  "appid": "your-appid",
+  "projectname": "unmanned-store",
+  "debugOptions": {
+    "hidedInDevtools": []
+  },
+  "condition": {
+    "miniprogram": {
+      "list": []
+    }
+  }
+}

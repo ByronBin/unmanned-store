@@ -1,0 +1,30 @@
+# 后端
+backend/logs/
+backend/*.log
+backend/config/config.local.yaml
+
+# 前端
+admin-frontend/node_modules/
+admin-frontend/dist/
+admin-frontend/.env.local
+
+# 小程序
+miniprogram/node_modules/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+docker/data/
+
+# 临时文件
+*.tmp
+tmp/
+.cache/

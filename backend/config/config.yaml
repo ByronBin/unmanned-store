@@ -1,0 +1,67 @@
+server:
+  port: 8080
+  mode: debug  # debug, release
+
+database:
+  host: localhost
+  port: 5432
+  user: postgres
+  password: postgres
+  dbname: unmanned_store
+  sslmode: disable
+  max_open_conns: 100
+  max_idle_conns: 10
+  conn_max_lifetime: 3600  # seconds
+
+redis:
+  host: localhost
+  port: 6379
+  password: ""
+  db: 0
+  pool_size: 100
+
+jwt:
+  secret: "your-secret-key-change-in-production"
+  expire_hours: 24
+  refresh_expire_hours: 168  # 7 days
+
+log:
+  level: debug  # debug, info, warn, error
+  file_path: logs/app.log
+
+rabbitmq:
+  url: "amqp://guest:guest@localhost:5672/"
+  exchange: "unmanned_store"
+  queues:
+    order: "order_queue"
+    payment: "payment_queue"
+    inventory: "inventory_queue"
+
+wechat:
+  app_id: ""
+  app_secret: ""
+  mch_id: ""
+  api_key: ""
+  notify_url: "http://yourdomain.com/api/v1/callback/wechat"
+
+alipay:
+  app_id: ""
+  private_key: ""
+  public_key: ""
+  notify_url: "http://yourdomain.com/api/v1/callback/alipay"
+
+oss:
+  endpoint: ""
+  access_key: ""
+  secret_key: ""
+  bucket: "unmanned-store"
+
+hardware:
+  hikvision:
+    host: ""
+    port: 80
+    username: ""
+    password: ""
+  esl:
+    api_url: ""
+    api_key: ""
