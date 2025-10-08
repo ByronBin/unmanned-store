@@ -109,10 +109,19 @@ func main() {
 			products := authorized.Group("/products")
 			{
 				products.GET("", handlers.Product.List)
+				products.GET("/search", handlers.Product.Search)
+				products.GET("/hot", handlers.Product.GetHotProducts)
 				products.GET("/:id", handlers.Product.Get)
 				products.POST("", middleware.RequireRole("admin", "store_manager"), handlers.Product.Create)
 				products.PUT("/:id", middleware.RequireRole("admin", "store_manager"), handlers.Product.Update)
+				products.PUT("/:id/status", middleware.RequireRole("admin", "store_manager"), handlers.Product.UpdateStatus)
 				products.DELETE("/:id", middleware.RequireRole("admin", "store_manager"), handlers.Product.Delete)
+				
+				// SKU管理
+				products.POST("/:id/skus", middleware.RequireRole("admin", "store_manager"), handlers.Product.CreateSKU)
+				products.PUT("/skus/:id", middleware.RequireRole("admin", "store_manager"), handlers.Product.UpdateSKU)
+				products.DELETE("/skus/:id", middleware.RequireRole("admin", "store_manager"), handlers.Product.DeleteSKU)
+				products.GET("/skus/:id", handlers.Product.GetSKU)
 			}
 
 			// 分类管理
@@ -128,11 +137,19 @@ func main() {
 			inventory := authorized.Group("/inventory")
 			inventory.Use(middleware.RequireRole("admin", "store_manager"))
 			{
-				inventory.GET("", handlers.Inventory.List)
-				inventory.POST("/in", handlers.Inventory.StockIn)
-				inventory.POST("/out", handlers.Inventory.StockOut)
-				inventory.POST("/transfer", handlers.Inventory.Transfer)
-				inventory.GET("/alerts", handlers.Inventory.Alerts)
+				inventory.GET("", handlers.Inventory.GetByStore)
+				inventory.GET("/sku/:skuId", handlers.Inventory.GetBySKU)
+				inventory.GET("/product/:productId", handlers.Inventory.GetByProduct)
+				inventory.POST("/adjust", handlers.Inventory.AdjustInventory)
+				inventory.POST("/stock-in", handlers.Inventory.StockIn)
+				inventory.POST("/stock-out", handlers.Inventory.StockOut)
+				inventory.GET("/low-stock", handlers.Inventory.GetLowStockItems)
+				inventory.GET("/logs", handlers.Inventory.GetInventoryLogs)
+				
+				// 库存盘点
+				inventory.POST("/counts", handlers.Inventory.CreateInventoryCount)
+				inventory.GET("/counts", handlers.Inventory.GetInventoryCounts)
+				inventory.POST("/counts/:id/submit", handlers.Inventory.SubmitInventoryCount)
 			}
 
 			// 订单管理

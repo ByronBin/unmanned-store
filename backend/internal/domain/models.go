@@ -52,12 +52,13 @@ type User struct {
 // Category 分类模型
 type Category struct {
 	BaseModel
-	Name     string     `gorm:"size:50;not null" json:"name"`
-	ParentID *uuid.UUID `gorm:"type:uuid" json:"parent_id"`
-	Parent   *Category  `gorm:"foreignKey:ParentID" json:"parent,omitempty"`
-	Sort     int        `gorm:"default:0" json:"sort"`
-	Icon     string     `gorm:"size:255" json:"icon"`
-	Status   string     `gorm:"size:20;default:'active'" json:"status"`
+	Name     string      `gorm:"size:50;not null" json:"name"`
+	ParentID *uuid.UUID  `gorm:"type:uuid" json:"parent_id"`
+	Parent   *Category   `gorm:"foreignKey:ParentID" json:"parent,omitempty"`
+	Children []*Category `gorm:"foreignKey:ParentID" json:"children,omitempty"`
+	Sort     int         `gorm:"default:0" json:"sort"`
+	Icon     string      `gorm:"size:255" json:"icon"`
+	Status   string      `gorm:"size:20;default:'active'" json:"status"`
 }
 
 // Product 商品模型
@@ -105,15 +106,43 @@ type Inventory struct {
 // InventoryLog 库存日志
 type InventoryLog struct {
 	BaseModel
-	StoreID   uuid.UUID  `gorm:"type:uuid;not null" json:"store_id"`
-	SKUID     uuid.UUID  `gorm:"type:uuid;not null" json:"sku_id"`
-	Type      string     `gorm:"size:20;not null" json:"type"` // in, out, transfer, adjust
-	Quantity  int        `gorm:"not null" json:"quantity"`
-	BeforeQty int        `json:"before_qty"`
-	AfterQty  int        `json:"after_qty"`
-	RelatedID *uuid.UUID `gorm:"type:uuid" json:"related_id"` // 关联订单或调拨单ID
-	Operator  uuid.UUID  `gorm:"type:uuid" json:"operator"`
-	Remark    string     `gorm:"size:255" json:"remark"`
+	StoreID     uuid.UUID  `gorm:"type:uuid;not null" json:"store_id"`
+	SKUID       uuid.UUID  `gorm:"type:uuid;not null" json:"sku_id"`
+	Type        string     `gorm:"size:20;not null" json:"type"` // in, out, transfer, adjust
+	Quantity    int        `gorm:"not null" json:"quantity"`
+	OldQuantity int        `json:"old_quantity"`
+	NewQuantity int        `json:"new_quantity"`
+	Reason      string     `gorm:"size:255" json:"reason"`
+	OperatorID  uuid.UUID  `gorm:"type:uuid" json:"operator_id"`
+	RelatedID   *uuid.UUID `gorm:"type:uuid" json:"related_id"` // 关联订单或调拨单ID
+}
+
+// InventoryCount 库存盘点
+type InventoryCount struct {
+	BaseModel
+	StoreID      uuid.UUID   `gorm:"type:uuid;not null" json:"store_id"`
+	Store        *Store      `gorm:"foreignKey:StoreID" json:"store,omitempty"`
+	CountNo      string      `gorm:"size:50;uniqueIndex;not null" json:"count_no"`
+	Status       string      `gorm:"size:20;default:'pending'" json:"status"` // pending, in_progress, completed
+	StartTime    *time.Time  `json:"start_time"`
+	EndTime      *time.Time  `json:"end_time"`
+	CompletedAt  *time.Time  `json:"completed_at"`
+	OperatorID   *uuid.UUID  `gorm:"type:uuid" json:"operator_id"`
+	Operator     *User       `gorm:"foreignKey:OperatorID" json:"operator,omitempty"`
+	Items        []InventoryCountItem `gorm:"foreignKey:CountID" json:"items,omitempty"`
+}
+
+// InventoryCountItem 库存盘点明细
+type InventoryCountItem struct {
+	BaseModel
+	CountID      uuid.UUID   `gorm:"type:uuid;not null" json:"count_id"`
+	Count        *InventoryCount `gorm:"foreignKey:CountID" json:"count,omitempty"`
+	SKUID        uuid.UUID   `gorm:"type:uuid;not null" json:"sku_id"`
+	SKU          *ProductSKU `gorm:"foreignKey:SKUID" json:"sku,omitempty"`
+	SystemQty    int         `gorm:"not null" json:"system_qty"`    // 系统库存
+	CountedQty   int         `gorm:"not null" json:"counted_qty"`   // 盘点数量
+	Difference   int         `gorm:"not null" json:"difference"`    // 差异数量
+	Status       string      `gorm:"size:20;default:'pending'" json:"status"` // pending, confirmed
 }
 
 // Order 订单模型

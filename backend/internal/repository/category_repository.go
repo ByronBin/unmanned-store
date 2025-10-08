@@ -49,7 +49,9 @@ func (r *categoryRepository) List() ([]*domain.Category, error) {
 
 func (r *categoryRepository) GetTree() ([]*domain.Category, error) {
 	var categories []*domain.Category
-	err := r.db.Where("deleted_at IS NULL AND parent_id IS NULL").Order("sort ASC").Find(&categories).Error
+	err := r.db.Where("deleted_at IS NULL AND parent_id IS NULL AND status = ?", "active").
+		Preload("Children", "deleted_at IS NULL AND status = ?", "active").
+		Order("sort ASC").Find(&categories).Error
 	if err != nil {
 		return nil, err
 	}
@@ -63,10 +65,14 @@ func (r *categoryRepository) GetTree() ([]*domain.Category, error) {
 }
 
 func (r *categoryRepository) loadChildren(parent *domain.Category) {
-	var children []*domain.Category
-	r.db.Where("parent_id = ? AND deleted_at IS NULL", parent.ID).Order("sort ASC").Find(&children)
-
-	for _, child := range children {
+	if len(parent.Children) == 0 {
+		return
+	}
+	
+	for _, child := range parent.Children {
+		r.db.Where("parent_id = ? AND deleted_at IS NULL AND status = ?", child.ID, "active").
+			Preload("Children", "deleted_at IS NULL AND status = ?", "active").
+			Order("sort ASC").Find(&child.Children)
 		r.loadChildren(child)
 	}
 }
