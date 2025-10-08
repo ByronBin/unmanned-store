@@ -116,7 +116,7 @@ func main() {
 				products.PUT("/:id", middleware.RequireRole("admin", "store_manager"), handlers.Product.Update)
 				products.PUT("/:id/status", middleware.RequireRole("admin", "store_manager"), handlers.Product.UpdateStatus)
 				products.DELETE("/:id", middleware.RequireRole("admin", "store_manager"), handlers.Product.Delete)
-				
+
 				// SKU管理
 				products.POST("/:id/skus", middleware.RequireRole("admin", "store_manager"), handlers.Product.CreateSKU)
 				products.PUT("/skus/:id", middleware.RequireRole("admin", "store_manager"), handlers.Product.UpdateSKU)
@@ -145,7 +145,7 @@ func main() {
 				inventory.POST("/stock-out", handlers.Inventory.StockOut)
 				inventory.GET("/low-stock", handlers.Inventory.GetLowStockItems)
 				inventory.GET("/logs", handlers.Inventory.GetInventoryLogs)
-				
+
 				// 库存盘点
 				inventory.POST("/counts", handlers.Inventory.CreateInventoryCount)
 				inventory.GET("/counts", handlers.Inventory.GetInventoryCounts)

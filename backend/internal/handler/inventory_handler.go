@@ -46,13 +46,13 @@ func (h *InventoryHandler) GetByStore(c *gin.Context) {
 
 	page := 1
 	pageSize := 20
-	
+
 	if p := c.Query("page"); p != "" {
 		if parsed, err := strconv.Atoi(p); err == nil && parsed > 0 {
 			page = parsed
 		}
 	}
-	
+
 	if ps := c.Query("page_size"); ps != "" {
 		if parsed, err := strconv.Atoi(ps); err == nil && parsed > 0 && parsed <= 100 {
 			pageSize = parsed
@@ -220,13 +220,13 @@ func (h *InventoryHandler) GetLowStockItems(c *gin.Context) {
 func (h *InventoryHandler) GetInventoryLogs(c *gin.Context) {
 	page := 1
 	pageSize := 20
-	
+
 	if p := c.Query("page"); p != "" {
 		if parsed, err := strconv.Atoi(p); err == nil && parsed > 0 {
 			page = parsed
 		}
 	}
-	
+
 	if ps := c.Query("page_size"); ps != "" {
 		if parsed, err := strconv.Atoi(ps); err == nil && parsed > 0 && parsed <= 100 {
 			pageSize = parsed
@@ -234,13 +234,13 @@ func (h *InventoryHandler) GetInventoryLogs(c *gin.Context) {
 	}
 
 	var storeID, skuID *uuid.UUID
-	
+
 	if storeIDStr := c.Query("store_id"); storeIDStr != "" {
 		if parsed, err := uuid.Parse(storeIDStr); err == nil {
 			storeID = &parsed
 		}
 	}
-	
+
 	if skuIDStr := c.Query("sku_id"); skuIDStr != "" {
 		if parsed, err := uuid.Parse(skuIDStr); err == nil {
 			skuID = &parsed

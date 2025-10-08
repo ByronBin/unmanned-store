@@ -89,26 +89,26 @@ func (h *ProductHandler) Delete(c *gin.Context) {
 func (h *ProductHandler) List(c *gin.Context) {
 	page := 1
 	pageSize := 20
-	
+
 	if p := c.Query("page"); p != "" {
 		if parsed, err := strconv.Atoi(p); err == nil && parsed > 0 {
 			page = parsed
 		}
 	}
-	
+
 	if ps := c.Query("page_size"); ps != "" {
 		if parsed, err := strconv.Atoi(ps); err == nil && parsed > 0 && parsed <= 100 {
 			pageSize = parsed
 		}
 	}
-	
+
 	var categoryID *uuid.UUID
 	if cid := c.Query("category_id"); cid != "" {
 		if parsed, err := uuid.Parse(cid); err == nil {
 			categoryID = &parsed
 		}
 	}
-	
+
 	keyword := c.Query("keyword")
 	status := c.Query("status")
 
@@ -119,9 +119,9 @@ func (h *ProductHandler) List(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"data":  products,
-		"total": total,
-		"page":  page,
+		"data":      products,
+		"total":     total,
+		"page":      page,
 		"page_size": pageSize,
 	})
 }
@@ -175,13 +175,13 @@ func (h *ProductHandler) Search(c *gin.Context) {
 
 	page := 1
 	pageSize := 20
-	
+
 	if p := c.Query("page"); p != "" {
 		if parsed, err := strconv.Atoi(p); err == nil && parsed > 0 {
 			page = parsed
 		}
 	}
-	
+
 	if ps := c.Query("page_size"); ps != "" {
 		if parsed, err := strconv.Atoi(ps); err == nil && parsed > 0 && parsed <= 100 {
 			pageSize = parsed
@@ -195,9 +195,9 @@ func (h *ProductHandler) Search(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"products": products,
-		"total":    total,
-		"page":     page,
+		"products":  products,
+		"total":     total,
+		"page":      page,
 		"page_size": pageSize,
 	})
 }

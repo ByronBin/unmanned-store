@@ -15,7 +15,7 @@ type ProductService interface {
 	UpdateStatus(id uuid.UUID, status string) error
 	GetHotProducts(limit int) ([]*domain.Product, error)
 	SearchProducts(keyword string, page, pageSize int) ([]*domain.Product, int64, error)
-	
+
 	// SKU管理
 	CreateSKU(sku *domain.ProductSKU) error
 	UpdateSKU(sku *domain.ProductSKU) error
@@ -59,12 +59,12 @@ func (s *productService) List(page, pageSize int, categoryID *uuid.UUID, keyword
 	if status != "" {
 		filters["status"] = status
 	}
-	
+
 	// 如果有关键词搜索，需要在repository层处理
 	if keyword != "" {
 		filters["keyword"] = keyword
 	}
-	
+
 	return s.productRepo.List(page, pageSize, filters)
 }
 
@@ -73,7 +73,7 @@ func (s *productService) UpdateStatus(id uuid.UUID, status string) error {
 	if err != nil {
 		return err
 	}
-	
+
 	product.Status = status
 	return s.productRepo.Update(product)
 }

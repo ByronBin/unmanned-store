@@ -13,32 +13,32 @@ type InventoryService interface {
 	GetByStore(storeID uuid.UUID, page, pageSize int) ([]*domain.Inventory, int64, error)
 	GetBySKU(skuID uuid.UUID, storeID *uuid.UUID) ([]*domain.Inventory, error)
 	GetByProduct(productID uuid.UUID, storeID *uuid.UUID) ([]*domain.Inventory, error)
-	
+
 	// 库存调整
 	AdjustInventory(storeID, skuID uuid.UUID, quantity int, reason string, operatorID uuid.UUID) error
 	StockIn(storeID, skuID uuid.UUID, quantity int, operatorID uuid.UUID) error
 	StockOut(storeID, skuID uuid.UUID, quantity int, reason string, operatorID uuid.UUID) error
-	
+
 	// 库存预警
 	GetLowStockItems(storeID *uuid.UUID, threshold int) ([]*domain.Inventory, error)
-	
+
 	// 库存盘点
 	CreateInventoryCount(count *domain.InventoryCount) error
 	GetInventoryCounts(storeID uuid.UUID, status string) ([]*domain.InventoryCount, error)
 	SubmitInventoryCount(countID uuid.UUID, items []domain.InventoryCountItem, operatorID uuid.UUID) error
-	
+
 	// 库存日志
 	GetInventoryLogs(storeID, skuID *uuid.UUID, page, pageSize int) ([]*domain.InventoryLog, int64, error)
 }
 
 type inventoryService struct {
-	inventoryRepo repository.InventoryRepository
+	inventoryRepo    repository.InventoryRepository
 	inventoryLogRepo repository.InventoryLogRepository
 }
 
 func NewInventoryService(inventoryRepo repository.InventoryRepository, inventoryLogRepo repository.InventoryLogRepository) InventoryService {
 	return &inventoryService{
-		inventoryRepo: inventoryRepo,
+		inventoryRepo:    inventoryRepo,
 		inventoryLogRepo: inventoryLogRepo,
 	}
 }
@@ -61,28 +61,28 @@ func (s *inventoryService) AdjustInventory(storeID, skuID uuid.UUID, quantity in
 	if err != nil {
 		return err
 	}
-	
+
 	oldQuantity := inventory.Quantity
 	newQuantity := oldQuantity + quantity
-	
+
 	// 更新库存
 	inventory.Quantity = newQuantity
 	if err := s.inventoryRepo.Update(inventory); err != nil {
 		return err
 	}
-	
+
 	// 记录库存日志
 	log := &domain.InventoryLog{
-		StoreID: storeID,
-		SKUID: skuID,
-		Type: "adjust",
-		Quantity: quantity,
+		StoreID:     storeID,
+		SKUID:       skuID,
+		Type:        "adjust",
+		Quantity:    quantity,
 		OldQuantity: oldQuantity,
 		NewQuantity: newQuantity,
-		Reason: reason,
-		OperatorID: operatorID,
+		Reason:      reason,
+		OperatorID:  operatorID,
 	}
-	
+
 	return s.inventoryLogRepo.Create(log)
 }
 
@@ -112,16 +112,16 @@ func (s *inventoryService) SubmitInventoryCount(countID uuid.UUID, items []domai
 	if err != nil {
 		return err
 	}
-	
+
 	count.Status = "completed"
 	count.CompletedAt = &time.Time{}
 	*count.CompletedAt = time.Now()
 	count.OperatorID = operatorID
-	
+
 	if err := s.inventoryRepo.UpdateInventoryCount(count); err != nil {
 		return err
 	}
-	
+
 	// 创建盘点项目
 	for _, item := range items {
 		item.CountID = countID
@@ -129,7 +129,7 @@ func (s *inventoryService) SubmitInventoryCount(countID uuid.UUID, items []domai
 			return err
 		}
 	}
-	
+
 	return nil
 }
 

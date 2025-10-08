@@ -15,7 +15,7 @@ type ProductRepository interface {
 	Delete(id uuid.UUID) error
 	List(page, pageSize int, filters map[string]interface{}) ([]*domain.Product, int64, error)
 	GetHotProducts(limit int) ([]*domain.Product, error)
-	
+
 	// SKU管理
 	CreateSKU(sku *domain.ProductSKU) error
 	UpdateSKU(sku *domain.ProductSKU) error

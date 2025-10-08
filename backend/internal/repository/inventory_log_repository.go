@@ -32,7 +32,7 @@ func (r *inventoryLogRepository) GetLogs(storeID, skuID *uuid.UUID, page, pageSi
 	if storeID != nil {
 		query = query.Where("store_id = ?", *storeID)
 	}
-	
+
 	if skuID != nil {
 		query = query.Where("sku_id = ?", *skuID)
 	}

@@ -68,7 +68,7 @@ func (r *categoryRepository) loadChildren(parent *domain.Category) {
 	if len(parent.Children) == 0 {
 		return
 	}
-	
+
 	for _, child := range parent.Children {
 		r.db.Where("parent_id = ? AND deleted_at IS NULL AND status = ?", child.ID, "active").
 			Preload("Children", "deleted_at IS NULL AND status = ?", "active").
