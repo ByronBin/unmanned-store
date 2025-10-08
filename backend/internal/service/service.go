@@ -27,7 +27,7 @@ func NewServices(repos *repository.Repositories, rdb *redis.Client, cfg *config.
 		Store:      NewStoreService(repos.Store),
 		Product:    NewProductService(repos.Product, repos.Category),
 		Category:   NewCategoryService(repos.Category),
-		Inventory:  NewInventoryService(repos.Inventory, repos.Product, rdb),
+		Inventory:  NewInventoryService(repos.Inventory, repos.InventoryLog),
 		Order:      NewOrderService(repos.Order, repos.Product, repos.Inventory, repos.Coupon, rdb),
 		Payment:    NewPaymentService(repos.Payment, repos.Order, cfg),
 		Member:     NewMemberService(repos.User, repos.Coupon),

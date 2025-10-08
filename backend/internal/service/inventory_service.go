@@ -116,7 +116,7 @@ func (s *inventoryService) SubmitInventoryCount(countID uuid.UUID, items []domai
 	count.Status = "completed"
 	count.CompletedAt = &time.Time{}
 	*count.CompletedAt = time.Now()
-	count.OperatorID = operatorID
+	count.OperatorID = &operatorID
 
 	if err := s.inventoryRepo.UpdateInventoryCount(count); err != nil {
 		return err
