@@ -61,8 +61,8 @@ services:
 
   admin-frontend:
     build:
-      context: ../admin-frontend
-      dockerfile: ../docker/Dockerfile.frontend
+      context: ..
+      dockerfile: docker/Dockerfile.frontend
     container_name: unmanned-store-admin
     ports:
       - "3000:80"
