@@ -78,3 +78,13 @@ func (h *CategoryHandler) List(c *gin.Context) {
 
 	c.JSON(http.StatusOK, categories)
 }
+
+func (h *CategoryHandler) GetTree(c *gin.Context) {
+	categories, err := h.categoryService.GetTree()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": categories})
+}
