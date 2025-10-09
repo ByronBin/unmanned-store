@@ -124,14 +124,16 @@ func main() {
 				products.GET("/skus/:id", handlers.Product.GetSKU)
 			}
 
-			// 分类管理
-			categories := authorized.Group("/categories")
-			{
-				categories.GET("", handlers.Category.List)
-				categories.POST("", middleware.RequireRole("admin"), handlers.Category.Create)
-				categories.PUT("/:id", middleware.RequireRole("admin"), handlers.Category.Update)
-				categories.DELETE("/:id", middleware.RequireRole("admin"), handlers.Category.Delete)
-			}
+		// 分类管理
+		categories := authorized.Group("/categories")
+		{
+			categories.GET("", handlers.Category.List)
+			categories.GET("/tree", handlers.Category.GetTree)
+			categories.GET("/:id", handlers.Category.Get)
+			categories.POST("", middleware.RequireRole("admin"), handlers.Category.Create)
+			categories.PUT("/:id", middleware.RequireRole("admin"), handlers.Category.Update)
+			categories.DELETE("/:id", middleware.RequireRole("admin"), handlers.Category.Delete)
+		}
 
 			// 库存管理
 			inventory := authorized.Group("/inventory")
